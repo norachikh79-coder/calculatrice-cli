@@ -1,0 +1,33 @@
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build and test with Maven
+        run: |
+          for i in 1 2 3; do
+            mvn -B clean verify --file pom.xml && exit 0
+            echo "Maven failed. Retrying in 20 seconds..."
+            sleep 20
+          done
+          exit 1
+
